@@ -48,18 +48,6 @@ class MainActivity : ComponentActivity() {
                     CameraComponent()
                 }
             }
-
-            val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-            if (device != null) {
-                DeviceClass(device.deviceName, device.deviceId, device.deviceClass)
-                Log.d(TAG, device.deviceName)
-                Log.d(TAG, "device Id - ${device.deviceId}")
-                Log.d(TAG, "device class - ${device.deviceClass}")
-                Log.d(TAG, "device subclass - ${device.deviceSubclass}")
-                Log.d(TAG, "device protocol - ${device.deviceProtocol}")
-            } else {
-                Toast.makeText(this, "device not connected",Toast.LENGTH_LONG).show()
-            }
         }
     }
 }
@@ -78,7 +66,6 @@ fun CameraComponent(modifier: Modifier = Modifier) {
             modifier = modifier)
 
         Button(onClick = {
-            cameraFunction()
             print("button on click here")
             isDetected = !isDetected
         }) {
@@ -87,10 +74,6 @@ fun CameraComponent(modifier: Modifier = Modifier) {
     }
 }
 
-// camera functionality
-private fun cameraFunction() {
-
-}
 
 @Preview(showBackground = true)
 @Composable
