@@ -1,6 +1,8 @@
 package com.techtribeservices.uvc_android
 
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Bundle
@@ -25,18 +27,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.getSystemService
+import com.techtribeservices.uvc_android.AppReceivers.AirPlanceModeReceiver
 
 data class DeviceClass(var deviceName:String = "",
     var deviceId:Any = "",
     var deviceClass: Any = "")
 
 var TAG = "CAM"
+var deviceName:String = "/dev/bus/usb/001/002"
 private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
 class MainActivity : ComponentActivity() {
-    val manager = getSystemService(Context.USB_SERVICE) as UsbManager
+    private val airPlaneModeReceiver = AirPlanceModeReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        registerReceiver(airPlaneModeReceiver,
+            IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+        )
 
         setContent {
             UVC_AndroidTheme {
@@ -49,6 +57,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(airPlaneModeReceiver)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val manager = getSystemService(Context.USB_SERVICE) as UsbManager
+        val deviceList = manager.deviceList
+        val device = deviceList[deviceName]
     }
 }
 
@@ -74,6 +94,9 @@ fun CameraComponent(modifier: Modifier = Modifier) {
     }
 }
 
+fun detectDevices() {
+
+}
 
 @Preview(showBackground = true)
 @Composable
