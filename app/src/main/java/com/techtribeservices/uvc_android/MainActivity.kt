@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat.getSystemService
 import com.techtribeservices.uvc_android.AppReceivers.AirPlanceModeReceiver
+import com.techtribeservices.uvc_android.AppReceivers.UsbDetectReceiver
 
 data class DeviceClass(var deviceName:String = "",
     var deviceId:Any = "",
@@ -40,10 +41,15 @@ private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
 class MainActivity : ComponentActivity() {
     private val airPlaneModeReceiver = AirPlanceModeReceiver()
+    private val usbDetectReceiver = UsbDetectReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver(airPlaneModeReceiver,
             IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+        )
+
+        registerReceiver(usbDetectReceiver,
+            IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
         )
 
         setContent {
@@ -62,6 +68,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(airPlaneModeReceiver)
+        unregisterReceiver(usbDetectReceiver)
     }
 
     override fun onStart() {
